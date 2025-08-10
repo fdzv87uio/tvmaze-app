@@ -5,6 +5,14 @@
       "bundler": "metro"
     },
     "name": "tvmaze-app",
-    "slug": "tvmaze-app"
+    "slug": "tvmaze-app",
+    "extra": {
+      "eas": {
+        "projectId": "6164bc5d-5fc4-4aaa-a014-1a5d2f526c28"
+      }
+    },
+    "android": {
+      "package": "com.fdzv87uio.tvmazeapp"
+    }
   }
 }
