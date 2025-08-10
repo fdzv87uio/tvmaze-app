@@ -1,7 +1,7 @@
 // app/show/[id].tsx
 import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, ActivityIndicator, Pressable, useWindowDimensions } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { SplashScreen, useLocalSearchParams } from 'expo-router';
 import { Show, Episode, Season } from '../../types/api';
 import apiClient from '../../api/tvmaze';
 import { useFavorites } from '../../context/FavoritesContext';
@@ -18,6 +18,10 @@ export default function ShowDetailsScreen() {
   const { addFavorite, removeFavorite, isFavorite } = useFavorites();
   const [selectedEpisode, setSelectedEpisode] = useState<Episode | null>(null);
   const { width } = useWindowDimensions();
+
+  useEffect(() => {
+      SplashScreen.hideAsync();
+    }, []);
 
   useEffect(() => {
     const fetchDetails = async () => {

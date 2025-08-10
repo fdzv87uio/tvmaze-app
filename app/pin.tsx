@@ -1,19 +1,26 @@
 import React, { useState, useEffect, FC, JSX } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
-import { useAuth, HARDCODED_PIN } from '../context/AuthContext'; // Updated import path
-import { useRouter } from 'expo-router';
+import { useAuth, HARDCODED_PIN } from '../context/AuthContext';
+import { useRouter, SplashScreen } from 'expo-router'; // Import SplashScreen
 
 // PIN entry screen with a numerical keypad
-export default function PinScreen () {
+export default function PinScreen() {
   const { login } = useAuth();
   const router = useRouter();
   const [pin, setPin] = useState<string>('');
   const [error, setError] = useState<string>('');
-  const pinLength: number = 4; // Define the required PIN length
+  const pinLength: number = 4;
+
+  // *** THE FIX IS HERE ***
+  // This useEffect will run once the PinScreen has mounted.
+  // Hiding the splash screen here ensures the user sees a seamless
+  // transition from the splash screen directly to the PIN input.
+  useEffect(() => {
+    SplashScreen.hideAsync();
+  }, []);
 
   // Handles number button presses
   const handleNumberPress = (number: string): void => {
-    // Only add a new digit if the PIN is not already at max length
     if (pin.length < pinLength) {
       setPin(pin + number);
       if (error) setError('');
@@ -30,14 +37,14 @@ export default function PinScreen () {
     if (pin.length === pinLength) {
       if (pin === HARDCODED_PIN) {
         login();
-        router.push('/index');
+        // IMPORTANT: Use replace so the user can't go "back" to the PIN screen.
+        router.replace('/');
       } else {
         setError('Incorrect PIN. Please try again.');
-        // Clear the PIN after a short delay to allow the user to see the error
         setTimeout(() => setPin(''), 1000);
       }
     }
-  }, [pin, login]);
+  }, [pin, login, router]); // Added router and changed push to replace
 
   const renderPinDots = (): JSX.Element[] => {
     const dots: JSX.Element[] = [];
@@ -53,12 +60,11 @@ export default function PinScreen () {
   };
 
   const renderKeypad = (): JSX.Element[] => {
-    // Layout for the 3x4 keypad
     const keypadButtons: (string | null)[][] = [
       ['1', '2', '3'],
       ['4', '5', '6'],
       ['7', '8', '9'],
-      [null, '0', 'backspace'], // null is a placeholder for spacing
+      [null, '0', 'backspace'],
     ];
 
     return keypadButtons.map((row, rowIndex) => (
@@ -68,7 +74,7 @@ export default function PinScreen () {
             key={buttonIndex}
             style={[
               styles.keypadButton,
-              buttonValue === null && styles.keypadButtonInvisible, // Hide the placeholder button
+              buttonValue === null && styles.keypadButtonInvisible,
             ]}
             onPress={() => {
               if (buttonValue === 'backspace') {
@@ -99,12 +105,10 @@ export default function PinScreen () {
       <Text style={styles.title}>Enter PIN</Text>
       <Text style={styles.subtitle}>Please enter your 4-digit PIN to access the app.</Text>
       
-      {/* Visual PIN display */}
       <View style={styles.pinDisplay}>{renderPinDots()}</View>
       
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
       
-      {/* Numeric Keypad */}
       <View style={styles.keypadContainer}>{renderKeypad()}</View>
     </View>
   );
@@ -116,18 +120,18 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#0d1117', // Dark charcoal background
+    backgroundColor: '#0d1117',
     padding: 20,
   },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#c9d1d9', // Light gray text for high contrast
+    color: '#c9d1d9',
   },
   subtitle: {
     fontSize: 18,
-    color: '#8b949e', // Muted gray for a softer contrast
+    color: '#8b949e',
     marginBottom: 40,
     textAlign: 'center',
   },
@@ -147,7 +151,7 @@ const styles = StyleSheet.create({
     opacity: 1,
   },
   errorText: {
-    color: '#f85149', // Vibrant red for the error message
+    color: '#f85149',
     fontSize: 16,
     marginBottom: 20,
     fontWeight: '600',
@@ -163,11 +167,10 @@ const styles = StyleSheet.create({
   keypadButton: {
     width: 70,
     height: 70,
-    borderRadius: 35, // Makes the button a circle
-    backgroundColor: '#238636', // A vibrant, accessible green
+    borderRadius: 35,
+    backgroundColor: '#238636',
     justifyContent: 'center',
     alignItems: 'center',
-    // Add a slight shadow for depth
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
@@ -177,7 +180,7 @@ const styles = StyleSheet.create({
   keypadButtonText: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#ffffff', // White text on the button
+    color: '#ffffff',
   },
   keypadButtonInvisible: {
     backgroundColor: 'transparent',
@@ -186,6 +189,6 @@ const styles = StyleSheet.create({
   },
   backspaceIcon: {
     fontSize: 28,
-    color: '#c9d1d9', // Light gray icon for contrast
+    color: '#c9d1d9',
   },
 });

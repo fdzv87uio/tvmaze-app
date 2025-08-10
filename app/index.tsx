@@ -1,7 +1,7 @@
 // app/index.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, FlatList, StyleSheet, ActivityIndicator, TextInput } from 'react-native';
-import { Link } from 'expo-router';
+import { Link, SplashScreen } from 'expo-router'; // Import SplashScreen
 import { SafeAreaView } from 'react-native-safe-area-context';
 import apiClient from '../api/tvmaze';
 import { Show } from '../types/api';
@@ -13,9 +13,14 @@ export default function HomeScreen() {
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  // We no longer need to check `isAuthenticated` here to redirect.
-  // The RootLayout now handles that logic.
   const { isAuthenticated } = useAuth();
+
+  // *** THE FIX IS HERE ***
+  // This useEffect runs once the HomeScreen is mounted, hiding the splash
+  // screen to ensure a smooth transition for authenticated users.
+  useEffect(() => {
+    SplashScreen.hideAsync();
+  }, []);
   
   const fetchShows = useCallback(async () => {
     if (loading) return;
@@ -35,7 +40,6 @@ export default function HomeScreen() {
     if (!query) {
       setPage(0);
       setShows([]);
-      // fetch initial shows when search is cleared
       fetchShows();
       return;
     }
@@ -52,8 +56,6 @@ export default function HomeScreen() {
   };
 
   useEffect(() => {
-    // We only fetch shows if the user is authenticated and not searching.
-    // The redirect logic has been moved to _layout.tsx.
     if (isAuthenticated && searchQuery === '') {
       fetchShows();
     }

@@ -1,6 +1,6 @@
 {
   "name": "tvmaze-app",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "author": "Fausto Zambrano d.zambrano.vasconez@gmail.com",
   "scripts": {
     "start": "expo start",
