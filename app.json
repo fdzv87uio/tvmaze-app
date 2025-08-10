@@ -13,6 +13,11 @@
     },
     "android": {
       "package": "com.fdzv87uio.tvmazeapp"
+    },
+    "backgroundColor": "#121212",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#000000"
     }
   }
 }
