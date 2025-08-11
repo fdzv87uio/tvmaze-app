@@ -1,7 +1,7 @@
 
 ## TVMAZE APP
 
-## A EXPO EAS React Native mobile app using EXPO ROUTER
+## An EXPO EAS React Native mobile app using EXPO ROUTER
 
 ## 🚀 Start Development Server
 
